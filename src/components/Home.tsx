@@ -1,7 +1,8 @@
-import { Alert, AlertIcon, Button, Card, CardBody, Grid, GridItem, Image, Input, Text } from "@chakra-ui/react"
+import { Alert, AlertIcon, Button, Card, CardBody, Center, Grid, GridItem, Image, Input, Text } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import apiClient from "../services/apiClient";
+import checkTokenExpiry from "../utils/tokenExpiry";
 
 // Create user schema
 interface User{
@@ -13,16 +14,6 @@ interface User{
 const token = localStorage.getItem("auth-token");
 
 // API for checking token expiry
-const checkTokenExpiry = async () => {
-    apiClient.get("/api/blacklist", { headers: { "auth-token": localStorage.getItem('auth-token') } })
-        .then(() => {
-            return true
-        })
-        .catch(() => {
-            return false;
-        });
-}
-
 const expiry = async () => {
     return await checkTokenExpiry();
 }
@@ -64,15 +55,28 @@ const Home = () => {
 
         // Render home component
         return (
-            <Grid templateColumns={"repeat(12, 1fr)"} padding={10} alignItems="center" gap={5}>
-                <GridItem colSpan={12} textAlign={"center"} rowSpan={1}>
-                    <Text fontSize="xxx-large">Teacher Portal</Text>
+            <Grid
+                templateColumns={{
+                    base: "repeat(1, 1fr)", sm: "repeat(2, 1fr)", md: "repeat(8, 1fr)",
+                    lg: "repeat(12, 1fr)", xl: "repeat(12, 1fr)"
+                }}
+                padding={{ base: 5, sm: 5, md: 8, lg: 12, xl: 10}}
+                alignItems="center"
+                gap={5}
+            >
+                <GridItem colSpan={{base: 1, sm: 2, md: 8, lg: 12, xl: 12}} textAlign={"center"} rowSpan={1}>
+                    <Text fontSize={{base: "x-large", sm: "x-large", md: "xx-large", lg: "xx-large", xl: "xxx-large"}}>Teacher Portal</Text>
                 </GridItem>
-                <GridItem colSpan={1}></GridItem>
-                <GridItem colSpan={5}>
-                    <Image src="../../public/managment-software.png" boxSize="550px" objectFit="contain" />
+                <GridItem colSpan={{ base: 1, sm: 2, md: 4, lg: 6, xl: 7 }}>
+                    <Center>
+                        <Image
+                            src="../../public/managment-software.png"
+                            boxSize={{base: "380px", sm: "400px", md: "450px", lg: "450px", xl: "550px"}}
+                            objectFit="contain"
+                        />
+                    </Center>
                 </GridItem>
-                <GridItem colSpan={4}>
+                <GridItem colSpan={{ base: 1, sm: 2, md: 4, lg: 4, xl: 4}}>
                     {alert &&
                         <Alert status='error' marginBottom={4}>
                             <AlertIcon />
@@ -84,6 +88,7 @@ const Home = () => {
                             <Text fontSize="x-large" align="center" marginBottom={5}>Login</Text>
                             <form onSubmit={handleSubmit((data) => onSubmit(data))}>
                                 <Input
+                                    size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}}
                                     {...register("id",
                                         {
                                             required: "User ID is required",
@@ -95,6 +100,7 @@ const Home = () => {
                                 {errors.id && <Text color={"red"}>{errors.id.message}</Text>}
                             
                                 <Input
+                                    size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}}
                                     placeholder="Password"
                                     {...register("password",
                                         {
@@ -107,6 +113,7 @@ const Home = () => {
                                 {errors.password && <Text color={"red"}>{errors.password.message}</Text>}
 
                                 <Button
+                                    size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}}
                                     isLoading={loader}
                                     width={"100%"}
                                     type="submit"
@@ -118,6 +125,7 @@ const Home = () => {
                         </CardBody>
                     </Card>
                 </GridItem>
+                <GridItem></GridItem>
             </Grid>
         )
     }

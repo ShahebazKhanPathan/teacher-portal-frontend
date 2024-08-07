@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FaUserCircle } from "react-icons/fa";
 import apiClient from "../services/apiClient";
+import checkTokenExpiry from "../utils/tokenExpiry";
+import logOut from "../utils/logOut";
 
 // Create student schema
 interface Student{
@@ -12,32 +14,10 @@ interface Student{
     marks: number
 }
 
-// API for logging out
-const logOut = async () => {
-    await apiClient.delete("/api/blacklist",
-        { headers: { "auth-token": localStorage.getItem('auth-token') } })
-        .then(() => {
-            localStorage.removeItem("auth-token");
-            location.href = "/";
-        })
-        .catch((err) => console.log(err));
-}
-
 // Get token
 const token = localStorage.getItem("auth-token");
 
 // API for checking token expiry
-const checkTokenExpiry = async () => {
-    apiClient.get("/api/blacklist", { headers: { "auth-token": localStorage.getItem('auth-token') } })
-        .then(() => {
-            return true
-        })
-        .catch(() => {
-            return false;
-        });
-}
-
-
 const expiry = async () => {
     return await checkTokenExpiry();
 }
@@ -179,15 +159,20 @@ const Dashboard = () => {
     
         // Render dasbhboard component
         return (
-            <Grid templateColumns={"repeat(12, 1fr)"} gap={5} padding={10} alignItems={"center"}>
-                <GridItem colSpan={10} textAlign={"center"} rowSpan={1}>
-                    <Text fontSize="xxx-large">Dashboard</Text>
+            <Grid
+                templateColumns={{base: "repeat(3, 1fr)"}}
+                gap={5}
+                padding={{ base: 5, sm: 5, md: 8, lg: 12, xl: 10}}
+                alignItems={"center"}
+            >
+                <GridItem colSpan={{base: 2}} textAlign={"center"} rowSpan={1}>
+                    <Text fontSize={{base: "x-large", sm: "x-large", md: "xx-large", lg: "xx-large", xl: "xxx-large"}}>Dashboard</Text>
                 </GridItem>
-                <GridItem colSpan={2}>
-                    <Button onClick={logOut} leftIcon={<FaUserCircle />} size={"lg"} variant={"ghost"}>Logout</Button>
+                <GridItem colSpan={{ base: 1}}>
+                    <Button size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}} onClick={logOut} leftIcon={<FaUserCircle />} size={"lg"} variant={"ghost"}>Logout</Button>
                 </GridItem>
-                <GridItem>
-                    <Button onClick={onNewStudent} color={"white"} backgroundColor={"black"}>Add new student</Button>
+                <GridItem colSpan={{base: 3}}>
+                    <Button size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}} onClick={onNewStudent} color={"white"} backgroundColor={"black"}>Add new student</Button>
                     <Modal isOpen={isOpen} onClose={() => { onClose(); reset(); setAlert("") }}>
                         <ModalOverlay />
                         <form onSubmit={handleSubmit((data) => onSubmit(data))}>
@@ -321,7 +306,7 @@ const Dashboard = () => {
                         </form>
                     </Modal>
                 </GridItem>
-                <GridItem colSpan={12} padding={5}>
+                <GridItem colSpan={{ base: 3}} padding={5}>
                     {deleteError &&
                         <Alert fontSize={"smaller"} status={"error"} marginBottom={4}>
                             <AlertIcon />

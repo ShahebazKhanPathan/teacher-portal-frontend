@@ -100,6 +100,7 @@ const Home = () => {
                                 {errors.id && <Text color={"red"}>{errors.id.message}</Text>}
                             
                                 <Input
+                                    type="password"
                                     size={{ base: "sm", sm: "sm", md: "md", lg: "md", xl: "lg"}}
                                     placeholder="Password"
                                     {...register("password",

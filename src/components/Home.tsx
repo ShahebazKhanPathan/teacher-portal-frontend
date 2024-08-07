@@ -1,7 +1,6 @@
 import { Alert, AlertIcon, Button, Card, CardBody, Grid, GridItem, Image, Input, Text } from "@chakra-ui/react"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate } from "react-router-dom";
 import apiClient from "../services/apiClient";
 
 // Create user schema
@@ -13,15 +12,36 @@ interface User{
 // Get token
 const token = localStorage.getItem("auth-token");
 
+// API for checking token expiry
+const checkTokenExpiry = async () => {
+    apiClient.get("/api/blacklist", { headers: { "auth-token": localStorage.getItem('auth-token') } })
+        .then(() => {
+            return true
+        })
+        .catch(() => {
+            return false;
+        });
+}
+
+const expiry = async () => {
+    return await checkTokenExpiry();
+}
+
 const Home = () => {
 
-    if (token) return <Navigate to={"/dashboard"} />;
+    const result = expiry();
 
-    else {
+    if (!result || !token) {
+
         // Handle states
         const { register, handleSubmit, formState: { errors }, reset } = useForm<User>();
-        const [ loader, setLoader ] = useState(false);
+        const [loader, setLoader] = useState(false);
         const [alert, setAlert] = useState('');
+
+        // Check token expiry
+        useEffect(() => {
+            checkTokenExpiry();
+        }, []);
         
         // Handle form submit
         const onSubmit = async (data: User) => {
@@ -94,14 +114,16 @@ const Home = () => {
                                     backgroundColor="black"
                                     color="white">Login
                                 </Button>
-                            
-                                <Text marginTop={4}><Link to={"/forget-password"}>Forget password?</Link></Text>
                             </form>
                         </CardBody>
                     </Card>
                 </GridItem>
             </Grid>
-        );
+        )
+    }
+    else {
+        // Redirect to dashboard if already logged in
+        location.href = "/dashboard";
     }
 }
 

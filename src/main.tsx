@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import { ChakraProvider } from '@chakra-ui/react'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Dashboard from './components/Dashboard.tsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App/>
+  },
+  {
+    path: "/dashboard",
+    element: <Dashboard/>
   }
 ]);
 
